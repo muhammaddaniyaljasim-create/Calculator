@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple Calculator</title>
+
+<style>
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #1a2639;
+  font-family: sans-serif;
+}
+
+.calculator {
+  background: #162230;
+  padding: 20px;
+  border-radius: 20px;
+  width: 300px;
+}
+
+input {
+  width: 100%;
+  border: none;
+  margin: 5px 0;
+  padding: 10px;
+  font-size: 1.5rem;
+  text-align: right;
+  background: #0f1722;
+  color: white;
+}
+
+#result {
+  color: #facc15;
+  font-size: 2rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+button {
+  padding: 15px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #1e2a3a;
+  color: white;
+}
+
+.operator { color: #facc15; }
+.equal { background: orange; }
+.clear { background: red; }
+.zero { grid-column: span 2; }
+</style>
+</head>
+
+<body>
+
+<div class="calculator">
+  <input id="exp" readonly>
+  <input id="result" value="0" readonly>
+
+  <div class="grid">
+    <button class="clear" onclick="allClear()">AC</button>
+    <button onclick="back()">C</button>
+    <button onclick="add('%')">%</button>
+    <button onclick="add('/')">÷</button>
+
+    <button onclick="add(7)">7</button>
+    <button onclick="add(8)">8</button>
+    <button onclick="add(9)">9</button>
+    <button onclick="add('*')">×</button>
+
+    <button onclick="add(4)">4</button>
+    <button onclick="add(5)">5</button>
+    <button onclick="add(6)">6</button>
+    <button onclick="add('-')">−</button>
+
+    <button onclick="add(1)">1</button>
+    <button onclick="add(2)">2</button>
+    <button onclick="add(3)">3</button>
+    <button onclick="add('+')">+</button>
+
+    <button class="zero" onclick="add(0)">0</button>
+    <button onclick="add('.')">.</button>
+    <button class="equal" onclick="calc()">=</button>
+  </div>
+</div>
+
+<script>
+let exp = "";
+const expBox = document.getElementById("exp");
+const resBox = document.getElementById("result");
+
+function update() {
+  expBox.value = exp;
+  try {
+    let r = eval(exp || "0");
+    resBox.value = isFinite(r) ? +r.toFixed(8) : "Error";
+  } catch {
+    resBox.value = "Error";
+  }
+}
+
+function add(val) {
+  if (val === '.' && /\.\d*$/.test(exp)) return;
+  if (/[+\-*/%]$/.test(exp) && /[+\-*/%]/.test(val)) {
+    exp = exp.slice(0, -1);
+  }
+  exp += val;
+  update();
+}
+
+function calc() {
+  try {
+    exp = eval(exp).toString();
+    update();
+  } catch {
+    resBox.value = "Math Error";
+  }
+}
+
+function back() {
+  exp = exp.slice(0, -1);
+  update();
+}
+
+function allClear() {
+  exp = "";
+  resBox.value = "0";
+  expBox.value = "";
+}
+
+document.addEventListener("keydown", e => {
+  if ("0123456789.+-*/%".includes(e.key)) add(e.key);
+  if (e.key === "Enter") calc();
+  if (e.key === "Backspace") back();
+  if (e.key === "Escape") allClear();
+});
+</script>
+
+</body>
+</html>
